@@ -1,0 +1,42 @@
+psql -h localhost -d project_users -U postgres -W
+\list \l
+\c expense
+\dt
+
+CREATE DATABASE expense;
+\c expense
+\dt
+
+CREATE TABLE users (
+  	id SERIAL PRIMARY KEY,
+    name varchar(50) NOT NULL, 
+  	email varchar(100) NOT NULL UNIQUE,
+  	password varchar(100) NOT NULL,
+	refresh_token TEXT NULL
+);
+
+ALTER TABLE users ADD refresh_token TEXT NULL;
+
+INSERT INTO users (id,name,email,password,refresh_token) VALUES (1,'John Doe','john@doe.com','$2a$10$hiBcD8BeUo4Omg4HrcgE2.5Go3rAEl6Sxbbhg6AGQpHV9C1XUaWbu', 'refresh_token');
+
+CREATE TABLE expenses (
+  	id SERIAL PRIMARY KEY,
+	user_id INT REFERENCES users(id) NOT NULL,
+	category_id INT REFERENCES users(id) NOT NULL,
+    expense VARCHAR(50) NOT NULL, 
+	total DECIMAL NOT NULL,
+  	created_at BIGINT NOT NULL
+);
+
+INSERT INTO expenses (id,user_id,category_id,expense,total,created_at) VALUES (1,1,1,'Buy milk, eggs, and bread',1000,1730471916006);
+
+DROP TABLE IF EXISTS expenses;
+
+CREATE TABLE categories (
+  	id SERIAL PRIMARY KEY,
+	category VARCHAR(50) NOT NULL
+);
+
+INSERT INTO categories(category) VALUES ('Groceries'),('Leisure'),('Electronics'),('Utilities'),('Clothing'),('Health'),('Others');
+
+DROP TABLE IF EXISTS categories;
